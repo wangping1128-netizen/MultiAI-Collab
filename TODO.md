@@ -45,7 +45,7 @@
 ### 3.1 Git 工作流
 - [x] **双仓库推送脚本**: `scripts/push_all.sh` 配置驱动 + `--force` 确认（Codex task-003）
 - [x] **pre-commit hook**: `.githooks/pre-commit` 非阻塞警告 + `scripts/setup_hooks.sh`（Codex task-003）
-- [ ] **分支策略**: 建立 `main` (稳定) + `master` (开发) 分支模型
+- [x] **分支策略**: `main` (稳定) + `master` (开发) 已建立并推送到双仓库
 
 ### 3.2 CLI 快捷命令
 - [x] **npm scripts 扩展**: 在 package.json 添加常用命令
@@ -95,6 +95,6 @@
 |-------|------|------|
 | Phase 1 | **已完成** | 任务管道 + Review 自动化 + 配置管理 + 日志监控 |
 | Phase 2 | **已完成** | E2E 冒烟测试 + Codex/Gemini 真实任务 + 降级验证 |
-| Phase 3 | 未开始 | 依赖 Phase 2 |
+| Phase 3 | **已完成** | Git 工作流 + CLI 快捷命令 + Agent 上下文注入 |
 | Phase 4 | 未开始 | 需用户确定业务方向 |
 | Phase 5 | 未开始 | 依赖 Phase 4 |
