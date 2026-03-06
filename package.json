@@ -7,6 +7,8 @@
     "start": "bash orchestrator.sh",
     "new-task": "bash scripts/new_task.sh",
     "status": "bash scripts/status.sh",
+    "review": "bash scripts/review.sh",
+    "review:watch": "bash scripts/review.sh --watch",
     "push": "git push github master && git push gitee master",
     "test": "echo \"No tests configured yet\" && exit 0"
   },

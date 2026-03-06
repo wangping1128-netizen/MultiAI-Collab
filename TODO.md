@@ -13,9 +13,9 @@
 - [x] **并行任务调度**: orchestrator 支持同时 dispatch 多个独立任务（后台执行 + PID 追踪）
 
 ### 1.2 Review 自动化
-- [ ] **Claude 自动 review 脚本**: `scripts/review.sh` 监听 `tasks/done/`，调用 Claude CLI 审查结果文件
-- [ ] **Review 报告格式**: 在 `tasks/done/` 生成 `task-XXX-review.md`（pass/fail + 反馈）
-- [ ] **失败自动重派**: review 失败时自动生成修复任务到 `tasks/pending/`
+- [x] **Claude 自动 review 脚本**: `scripts/review.sh` 一次性 + `--watch` 轮询模式，调用 Claude CLI (-p) 审查
+- [x] **Review 报告格式**: 在 `tasks/done/` 生成 `task-XXX-review.md`（verdict/score/feedback/action）
+- [x] **失败自动重派**: review fail/revise 时自动生成修复任务到 `tasks/pending/`
 
 ### 1.3 配置管理
 - [ ] **统一配置文件**: 创建 `config.toml`，集中管理 poll interval、timeout、model 选择、sandbox 模式等
