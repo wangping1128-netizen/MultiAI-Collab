@@ -1,0 +1,44 @@
+#!/bin/bash
+# =============================================================================
+# pre-commit - Warn when src/ changes are committed without a task file
+# =============================================================================
+
+set -u
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$REPO_ROOT" || exit 0
+
+STAGED_FILES="$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)"
+
+if [[ -z "$STAGED_FILES" ]]; then
+  exit 0
+fi
+
+if ! grep -q '^src/' <<< "$STAGED_FILES"; then
+  exit 0
+fi
+
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")"
+TASK_ID="$(grep -Eo 'task-[0-9]+' <<< "$BRANCH_NAME" | head -n 1 || true)"
+
+HAS_TASK_FILE=0
+if [[ -n "$TASK_ID" ]]; then
+  if [[ -f "tasks/in-progress/$TASK_ID.md" || -f "tasks/done/$TASK_ID-result.md" ]]; then
+    HAS_TASK_FILE=1
+  fi
+fi
+
+if [[ "$HAS_TASK_FILE" -eq 0 ]]; then
+  echo "WARNING: Staged changes include files under src/ but no matching task file was found."
+  if [[ -n "$TASK_ID" ]]; then
+    echo "Expected one of:"
+    echo "  tasks/in-progress/$TASK_ID.md"
+    echo "  tasks/done/$TASK_ID-result.md"
+  else
+    echo "Current branch '$BRANCH_NAME' does not include a task id (expected pattern: task-###)."
+    echo "Without a task id, the hook cannot verify a corresponding file in tasks/in-progress/ or tasks/done/."
+  fi
+  echo "Commit is allowed (warning only)."
+fi
+
+exit 0

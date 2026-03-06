@@ -43,8 +43,8 @@
 ## Phase 3: 开发体验优化
 
 ### 3.1 Git 工作流
-- [ ] **双仓库推送脚本**: `scripts/push_all.sh` 一键推送到 github + gitee
-- [ ] **pre-commit hook**: 检查不允许直接修改 `src/` 目录（必须通过任务流程）
+- [x] **双仓库推送脚本**: `scripts/push_all.sh` 配置驱动 + `--force` 确认（Codex task-003）
+- [x] **pre-commit hook**: `.githooks/pre-commit` 非阻塞警告 + `scripts/setup_hooks.sh`（Codex task-003）
 - [ ] **分支策略**: 建立 `main` (稳定) + `master` (开发) 分支模型
 
 ### 3.2 CLI 快捷命令
@@ -53,10 +53,10 @@
   - `npm run status` -> 查看任务状态
   - `npm run start` -> 启动 orchestrator
   - `npm run push` -> 推送到双仓库
-- [ ] **交互式任务创建器**: Node.js 脚本，用 Inquirer.js 引导创建任务
+- [x] **交互式任务创建器**: `scripts/create_task.js` Inquirer.js 交互式创建（Codex task-005）
 
 ### 3.3 Agent 上下文注入
-- [ ] **项目上下文文件**: 生成 `AGENTS.md`，为 Codex/Gemini 提供项目结构、技术栈、编码规范
+- [x] **项目上下文文件**: `AGENTS.md` 已创建，包含技术栈、项目结构、编码规范
 - [x] **assign 脚本注入上下文**: 在 prompt 前自动附加 AGENTS.md 内容（已预埋，AGENTS.md 存在时自动注入）
 
 ---

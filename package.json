@@ -6,6 +6,8 @@
   "scripts": {
     "start": "bash orchestrator.sh",
     "new-task": "bash scripts/new_task.sh",
+    "create-task": "node scripts/create_task.js",
+    "push-all": "bash scripts/push_all.sh",
     "status": "bash scripts/status.sh",
     "review": "bash scripts/review.sh",
     "review:watch": "bash scripts/review.sh --watch",
@@ -17,5 +19,8 @@
   },
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "inquirer": "^8.2.7"
   }
 }
