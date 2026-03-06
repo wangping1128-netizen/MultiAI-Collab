@@ -30,13 +30,13 @@
 ## Phase 2: 端到端验证
 
 ### 2.1 冒烟测试
-- [ ] **E2E 测试脚本**: `scripts/test_e2e.sh` 创建一个简单任务，走完 pending -> dispatch -> done -> review 全流程
-- [ ] **Mock 模式**: assign 脚本支持 `--dry-run`，不实际调用 CLI，而是生成模拟结果文件（用于 CI）
+- [x] **E2E 测试脚本**: `scripts/test_e2e.sh` 8项测试全通过（config/new_task/codex/gemini/status）
+- [x] **Mock 模式**: config.json `dry_run: true` 开关，assign 脚本生成模拟结果文件
 
 ### 2.2 用真实任务验证
-- [ ] **测试任务 1 (Codex)**: 让 Codex 创建一个简单的 Express.js hello world endpoint
-- [ ] **测试任务 2 (Gemini)**: 让 Gemini 创建一个简单的 React 组件
-- [ ] **测试降级路径**: 故意触发超时，验证降级 + failed result 文件生成
+- [x] **测试任务 1 (Codex)**: Codex (gpt-5.3-codex) 创建 Express /health endpoint，1/1 测试通过
+- [x] **测试任务 2 (Gemini -> Codex 降级)**: Gemini 配额耗尽，自动降级到 Codex 完成 StatusCard，2/2 测试通过
+- [x] **测试降级路径**: Gemini 429 quota -> 降级到 Codex fallback 成功验证
 
 ---
 
@@ -93,8 +93,8 @@
 
 | Phase | 状态 | 备注 |
 |-------|------|------|
-| Phase 1 | **进行中** | 核心脚本已接入真实 CLI，待完善自动化 |
-| Phase 2 | 未开始 | 依赖 Phase 1 |
+| Phase 1 | **已完成** | 任务管道 + Review 自动化 + 配置管理 + 日志监控 |
+| Phase 2 | **已完成** | E2E 冒烟测试 + Codex/Gemini 真实任务 + 降级验证 |
 | Phase 3 | 未开始 | 依赖 Phase 2 |
 | Phase 4 | 未开始 | 需用户确定业务方向 |
 | Phase 5 | 未开始 | 依赖 Phase 4 |

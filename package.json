@@ -10,9 +10,12 @@
     "review": "bash scripts/review.sh",
     "review:watch": "bash scripts/review.sh --watch",
     "push": "git push github master && git push gitee master",
-    "test": "echo \"No tests configured yet\" && exit 0"
+    "test": "bash scripts/test_e2e.sh"
   },
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }

@@ -1,16 +1,17 @@
 {
+  "dry_run": false,
   "orchestrator": {
     "poll_interval": 5,
     "task_timeout": 600,
     "max_parallel": 3
   },
   "codex": {
-    "model": "o3",
+    "model": "",
     "sandbox": "workspace-write",
     "ephemeral": true
   },
   "gemini": {
-    "model": "",
+    "model": "gemini-2.5-flash",
     "approval_mode": "yolo",
     "output_format": "text"
   },
