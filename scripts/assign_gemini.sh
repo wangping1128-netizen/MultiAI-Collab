@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
 # Assign task to Gemini CLI (frontend engineer / code reviewer)
-# Uses: gemini -p (non-interactive headless mode)
+# Uses: gemini -p (non-interactive headless mode) with prompt file
 # =============================================================================
 
 set -euo pipefail
@@ -11,47 +11,61 @@ TASK_NAME=$(basename "$TASK_FILE" .md)
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 DONE_DIR="$SCRIPT_DIR/tasks/done"
 RESULT_FILE="$DONE_DIR/${TASK_NAME}-result.md"
+AGENTS_FILE="$SCRIPT_DIR/AGENTS.md"
 
 TASK_CONTENT=$(cat "$TASK_FILE")
 
-PROMPT="You are a frontend engineer working in the project at: $SCRIPT_DIR
+# Build prompt into temp file (avoids argument length limits)
+PROMPT_FILE=$(mktemp)
+trap 'rm -f "$PROMPT_FILE"' EXIT
 
-Here is your task:
-
-$TASK_CONTENT
-
-INSTRUCTIONS:
-1. Read the task carefully, implement ALL requirements.
-2. Only modify files listed in 'File Scope'. Do NOT touch other files.
-3. Write clean, tested code.
-4. When done, create a result file at: $RESULT_FILE
-
-The result file MUST follow this exact format:
-
-# ${TASK_NAME} Result
-
-## Status
-<completed | partial | failed>
-
-## Files Modified
-- path/to/file.js (description, N lines)
-
-## Test Results
-Passed: X / Y
-Coverage: Z%
-
-## Notes
-Any caveats or follow-ups.
-"
+{
+  echo "You are a frontend engineer working in the project at: $SCRIPT_DIR"
+  echo ""
+  if [ -f "$AGENTS_FILE" ]; then
+    echo "## Project Context"
+    cat "$AGENTS_FILE"
+    echo ""
+  fi
+  echo "## Your Task"
+  echo ""
+  echo "$TASK_CONTENT"
+  echo ""
+  echo "## Instructions"
+  echo "1. Read the task carefully, implement ALL requirements."
+  echo "2. Only modify files listed in 'File Scope'. Do NOT touch other files."
+  echo "3. Write clean, tested code."
+  echo "4. When done, create a result file at: $RESULT_FILE"
+  echo ""
+  echo "The result file MUST follow this exact format:"
+  echo ""
+  echo "# ${TASK_NAME} Result"
+  echo ""
+  echo "## Status"
+  echo "<completed | partial | failed>"
+  echo ""
+  echo "## Files Modified"
+  echo "- path/to/file.js (description, N lines)"
+  echo ""
+  echo "## Test Results"
+  echo "Passed: X / Y"
+  echo "Coverage: Z%"
+  echo ""
+  echo "## Notes"
+  echo "Any caveats or follow-ups."
+} > "$PROMPT_FILE"
 
 echo "  Gemini executing: $TASK_NAME"
 
 RETRY_COUNT=0
 MAX_RETRIES=2
 
+# Read prompt from file, pass via -p flag (Gemini reads stdin + -p together)
+PROMPT_CONTENT=$(cat "$PROMPT_FILE")
+
 while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-  gemini \
-    -p "$PROMPT" \
+  echo "$PROMPT_CONTENT" | gemini \
+    -p - \
     --approval-mode yolo \
     -o text 2>&1 | while IFS= read -r line; do echo "  [gemini] $line"; done
 

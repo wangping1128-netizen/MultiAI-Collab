@@ -7,10 +7,10 @@
 ## Phase 1: 框架核心完善
 
 ### 1.1 任务管道 (Task Pipeline)
-- [ ] **任务自动编号**: 编写 `scripts/new_task.sh`，扫描已有 task 文件自动分配下一个 3 位编号
-- [ ] **任务模板生成**: `new_task.sh` 交互式创建任务文件（标题、assignee、file scope）
-- [ ] **Prompt 传递优化**: assign 脚本改用 stdin pipe 传递 prompt，避免参数长度限制
-- [ ] **并行任务调度**: orchestrator 支持同时 dispatch 多个独立任务（后台执行 + PID 追踪）
+- [x] **任务自动编号**: 编写 `scripts/new_task.sh`，扫描已有 task 文件自动分配下一个 3 位编号
+- [x] **任务模板生成**: `new_task.sh` 交互式创建任务文件（标题、assignee、file scope）
+- [x] **Prompt 传递优化**: assign 脚本改用 stdin pipe / temp file 传递 prompt，避免参数长度限制
+- [x] **并行任务调度**: orchestrator 支持同时 dispatch 多个独立任务（后台执行 + PID 追踪）
 
 ### 1.2 Review 自动化
 - [ ] **Claude 自动 review 脚本**: `scripts/review.sh` 监听 `tasks/done/`，调用 Claude CLI 审查结果文件
@@ -22,8 +22,8 @@
 - [ ] **脚本读取配置**: orchestrator 和 assign 脚本从 `config.toml` 读取参数，而非硬编码
 
 ### 1.4 日志与监控
-- [ ] **结构化日志**: orchestrator 输出写入 `logs/orchestrator.log`（带时间戳 + 任务名）
-- [ ] **任务统计面板**: `scripts/status.sh` 汇总当前各目录任务数量、成功/失败率、平均耗时
+- [x] **结构化日志**: orchestrator 输出写入 `logs/orchestrator.log`（带时间戳 + 任务名）
+- [x] **任务统计面板**: `scripts/status.sh` 汇总当前各目录任务数量、成功/失败率、平均耗时
 
 ---
 
@@ -48,7 +48,7 @@
 - [ ] **分支策略**: 建立 `main` (稳定) + `master` (开发) 分支模型
 
 ### 3.2 CLI 快捷命令
-- [ ] **npm scripts 扩展**: 在 package.json 添加常用命令
+- [x] **npm scripts 扩展**: 在 package.json 添加常用命令
   - `npm run new-task` -> 创建任务
   - `npm run status` -> 查看任务状态
   - `npm run start` -> 启动 orchestrator
@@ -57,7 +57,7 @@
 
 ### 3.3 Agent 上下文注入
 - [ ] **项目上下文文件**: 生成 `AGENTS.md`，为 Codex/Gemini 提供项目结构、技术栈、编码规范
-- [ ] **assign 脚本注入上下文**: 在 prompt 前自动附加 AGENTS.md 内容
+- [x] **assign 脚本注入上下文**: 在 prompt 前自动附加 AGENTS.md 内容（已预埋，AGENTS.md 存在时自动注入）
 
 ---
 
