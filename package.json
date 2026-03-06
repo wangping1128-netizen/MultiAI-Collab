@@ -1,0 +1,13 @@
+{
+  "name": "multiai-collab",
+  "version": "0.1.0",
+  "description": "Multi-AI collaboration framework: Claude (PM) + Codex (backend) + Gemini (frontend)",
+  "private": true,
+  "scripts": {
+    "orchestrate": "bash orchestrator.sh",
+    "test": "echo \"No tests configured yet\" && exit 0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
