@@ -18,8 +18,8 @@
 - [x] **失败自动重派**: review fail/revise 时自动生成修复任务到 `tasks/pending/`
 
 ### 1.3 配置管理
-- [ ] **统一配置文件**: 创建 `config.toml`，集中管理 poll interval、timeout、model 选择、sandbox 模式等
-- [ ] **脚本读取配置**: orchestrator 和 assign 脚本从 `config.toml` 读取参数，而非硬编码
+- [x] **统一配置文件**: 创建 `config.json`，集中管理 poll interval、timeout、model、sandbox、review 等参数
+- [x] **脚本读取配置**: 所有脚本通过 `scripts/lib/config.sh` 的 `cfg()` 函数读取配置，零硬编码
 
 ### 1.4 日志与监控
 - [x] **结构化日志**: orchestrator 输出写入 `logs/orchestrator.log`（带时间戳 + 任务名）

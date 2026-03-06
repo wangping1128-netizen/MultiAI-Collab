@@ -14,11 +14,18 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+source "$SCRIPT_DIR/scripts/lib/config.sh"
+
 PENDING="$SCRIPT_DIR/tasks/pending"
 INPROG="$SCRIPT_DIR/tasks/in-progress"
 DONE="$SCRIPT_DIR/tasks/done"
 LOG_DIR="$SCRIPT_DIR/logs"
 WATCH_MODE=false
+
+REVIEW_POLL=$(cfg "review.poll_interval" 10)
+REVIEW_AUTO_FIX=$(cfg "review.auto_fix" "true")
+CLAUDE_MODEL=$(cfg "claude.model" "")
+CLAUDE_TOOLS=$(cfg "claude.allowed_tools" "Read")
 
 mkdir -p "$LOG_DIR"
 
@@ -175,7 +182,11 @@ review_one() {
 
   # Call Claude CLI in non-interactive mode
   local claude_output
-  claude_output=$(cat "$prompt_file" | claude -p --allowedTools "Read" --no-session-persistence 2>/dev/null) || {
+  # Build claude command with config
+  local claude_cmd=(claude -p --allowedTools "$CLAUDE_TOOLS" --no-session-persistence)
+  [[ -n "$CLAUDE_MODEL" ]] && claude_cmd+=(--model "$CLAUDE_MODEL")
+
+  claude_output=$(cat "$prompt_file" | "${claude_cmd[@]}" 2>/dev/null) || {
     log "ERROR: Claude CLI failed for $task_id"
     return 1
   }
@@ -192,8 +203,12 @@ review_one() {
   action=$(grep -i '## Action' -A1 "$review_file" | tail -1 | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]') || true
 
   if [[ "$verdict" == "fail" ]] || [[ "$action" == "revise" ]]; then
-    log "FAILED: $task_id -> generating fix task"
-    generate_fix_task "$task_id" "$review_file" "${task_file:-}"
+    if [[ "$REVIEW_AUTO_FIX" == "true" ]]; then
+      log "FAILED: $task_id -> generating fix task"
+      generate_fix_task "$task_id" "$review_file" "${task_file:-}"
+    else
+      log "FAILED: $task_id -> auto-fix disabled, manual intervention needed"
+    fi
   else
     log "PASSED: $task_id -> ready for git commit"
   fi
@@ -226,7 +241,7 @@ if [ "$WATCH_MODE" = true ]; then
   log "Watch mode enabled. Polling for new results..."
   while true; do
     run_reviews
-    sleep 10
+    sleep "$REVIEW_POLL"
   done
 else
   run_reviews

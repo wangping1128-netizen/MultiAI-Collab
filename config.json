@@ -1,0 +1,30 @@
+{
+  "orchestrator": {
+    "poll_interval": 5,
+    "task_timeout": 600,
+    "max_parallel": 3
+  },
+  "codex": {
+    "model": "o3",
+    "sandbox": "workspace-write",
+    "ephemeral": true
+  },
+  "gemini": {
+    "model": "",
+    "approval_mode": "yolo",
+    "output_format": "text"
+  },
+  "claude": {
+    "model": "",
+    "allowed_tools": "Read",
+    "no_session_persistence": true
+  },
+  "review": {
+    "poll_interval": 10,
+    "auto_fix": true
+  },
+  "git": {
+    "remotes": ["github", "gitee"],
+    "branch": "master"
+  }
+}

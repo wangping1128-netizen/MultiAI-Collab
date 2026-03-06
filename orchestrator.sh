@@ -11,13 +11,15 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/scripts/lib/config.sh"
+
 PENDING="$SCRIPT_DIR/tasks/pending"
 INPROG="$SCRIPT_DIR/tasks/in-progress"
 DONE="$SCRIPT_DIR/tasks/done"
 LOG_DIR="$SCRIPT_DIR/logs"
-POLL_INTERVAL=5
-TASK_TIMEOUT=600  # 10 minutes per task
-MAX_PARALLEL=3    # max concurrent tasks
+POLL_INTERVAL=$(cfg "orchestrator.poll_interval" 5)
+TASK_TIMEOUT=$(cfg "orchestrator.task_timeout" 600)
+MAX_PARALLEL=$(cfg "orchestrator.max_parallel" 3)
 
 # Ensure directories exist
 mkdir -p "$PENDING" "$INPROG" "$DONE" "$LOG_DIR"

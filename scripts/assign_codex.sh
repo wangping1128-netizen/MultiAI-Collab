@@ -9,9 +9,15 @@ set -euo pipefail
 TASK_FILE="$1"
 TASK_NAME=$(basename "$TASK_FILE" .md)
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+source "$SCRIPT_DIR/scripts/lib/config.sh"
+
 DONE_DIR="$SCRIPT_DIR/tasks/done"
 RESULT_FILE="$DONE_DIR/${TASK_NAME}-result.md"
 AGENTS_FILE="$SCRIPT_DIR/AGENTS.md"
+
+CODEX_MODEL=$(cfg "codex.model" "")
+CODEX_SANDBOX=$(cfg "codex.sandbox" "workspace-write")
+CODEX_EPHEMERAL=$(cfg "codex.ephemeral" "true")
 
 TASK_CONTENT=$(cat "$TASK_FILE")
 
@@ -62,11 +68,13 @@ RETRY_COUNT=0
 MAX_RETRIES=2
 
 while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-  # Pass prompt via stdin (use "-" to read from stdin)
-  codex exec \
-    -s workspace-write \
-    --ephemeral \
-    - < "$PROMPT_FILE" 2>&1 | while IFS= read -r line; do echo "  [codex] $line"; done
+  # Build codex exec command with config
+  CODEX_CMD=(codex exec -s "$CODEX_SANDBOX")
+  [[ "$CODEX_EPHEMERAL" == "true" ]] && CODEX_CMD+=(--ephemeral)
+  [[ -n "$CODEX_MODEL" ]] && CODEX_CMD+=(-m "$CODEX_MODEL")
+  CODEX_CMD+=(-)
+
+  "${CODEX_CMD[@]}" < "$PROMPT_FILE" 2>&1 | while IFS= read -r line; do echo "  [codex] $line"; done
 
   if [ -f "$RESULT_FILE" ]; then
     echo "  Codex completed: $RESULT_FILE"

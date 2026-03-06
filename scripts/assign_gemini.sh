@@ -9,9 +9,15 @@ set -euo pipefail
 TASK_FILE="$1"
 TASK_NAME=$(basename "$TASK_FILE" .md)
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+source "$SCRIPT_DIR/scripts/lib/config.sh"
+
 DONE_DIR="$SCRIPT_DIR/tasks/done"
 RESULT_FILE="$DONE_DIR/${TASK_NAME}-result.md"
 AGENTS_FILE="$SCRIPT_DIR/AGENTS.md"
+
+GEMINI_MODEL=$(cfg "gemini.model" "")
+GEMINI_APPROVAL=$(cfg "gemini.approval_mode" "yolo")
+GEMINI_OUTPUT=$(cfg "gemini.output_format" "text")
 
 TASK_CONTENT=$(cat "$TASK_FILE")
 
@@ -64,10 +70,11 @@ MAX_RETRIES=2
 PROMPT_CONTENT=$(cat "$PROMPT_FILE")
 
 while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-  echo "$PROMPT_CONTENT" | gemini \
-    -p - \
-    --approval-mode yolo \
-    -o text 2>&1 | while IFS= read -r line; do echo "  [gemini] $line"; done
+  # Build gemini command with config
+  GEMINI_CMD=(gemini -p - --approval-mode "$GEMINI_APPROVAL" -o "$GEMINI_OUTPUT")
+  [[ -n "$GEMINI_MODEL" ]] && GEMINI_CMD+=(-m "$GEMINI_MODEL")
+
+  echo "$PROMPT_CONTENT" | "${GEMINI_CMD[@]}" 2>&1 | while IFS= read -r line; do echo "  [gemini] $line"; done
 
   if [ -f "$RESULT_FILE" ]; then
     echo "  Gemini completed: $RESULT_FILE"
